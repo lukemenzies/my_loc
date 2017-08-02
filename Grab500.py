@@ -1,20 +1,22 @@
-#!/usr/bin/python3
-# this script grabs the first 500 lines of a text file
+#!/usr/bin/python
+# Get500.py
+# This script grabs the first 500 lines of a text file
 # so I can test scripts on the text file without inputting
-# the whole 425MB text
+# the whole 425MB text.
 
-import sys
+import sys, os
 
-Homedir = raw_input("What home directory? ")
-SrcFile = Homedir+raw_input("What source file? ")
-DstFile = Homedir+raw_input("What is the new file? ")
+# homedir = os.getcwd()
+homedir = raw_input("What is the working directory? ")
+print("From what file will the lines be taken (including extension)?")
+srcfile = os.path.join(homedir, raw_input("    : %s/" %homedir))
+print("What will the new file be named (including extension)?")
+dstfile = os.path.join(homedir, raw_input("    : %s/" %homedir))
 linenum = 0
-with open(DstFile, 'w') as ofile:
-    with open(SrcFile, 'r') as ifile:
-        for line in ifile:
-            if linenum < 500:
-                ofile.write(line)
-            linenum = linenum + 1
-            print(linenum)
-            if linenum >= 500:
-                sys.exit
+with open(dstfile, 'w') as ofile:
+    with open(srcfile, 'r') as ifile:
+        while linenum < 500:
+            line = ifile.readline()
+            ofile.write(line)
+            linenum += 1
+            print("line: %d" %linenum)

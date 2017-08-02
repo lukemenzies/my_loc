@@ -1,15 +1,16 @@
 #!/usr/bin/python3
-# this is a few lines that remove the non-alphanumeric characters from a text file
-# it also removes any punctuation not specified in line 19
-# in addition, it joins words that have been split by the endline character
-# this script does NOT add words to the personal word list or exception list
+# FixOCR.py uses Python 3
+# This script removes the non-alphanumeric characters from a text file.
+# It also removes any punctuation not specified in line 66.
+# In addition, it joins words that have been split by the endline character.
+# This script does NOT add words to the personal word list or exception list.
 # The script Wordlists.py does that.
-# Finally, this script deletes any misspelled 'words' that are 3 characters or fewer.
-# The dictionary includes Roman numerals as correctly spelled words, though.
-# Created by Luke Menzies for the Library of Congress 6/20/17
+# Finally, it deletes any misspelled words 3-letters or fewer.
+# Created by Luke Menzies for the Library of Congress 6/20/17.
 
 import os, sys, enchant
 from enchant import DictWithPWL
+from os.path import basename
 
 def yes_no(prompt):
     yes = set(['yes','y','ye',''])
@@ -25,27 +26,31 @@ def yes_no(prompt):
 
 personalists = True
 personalists = yes_no("Do you have personal word and exception lists (y/n)? ")
-# Homedir = input("What home directory? ")
-Homedir = '/Users/lmenzies/Documents/1Docs2017/SU17/LoC/LoC4Robots/'
+# the following lines can be edited to prompt the user for a path
+# print("What is the path to the working directory? ")
+# print("(Include fore and aft slashes.)")
+# homedir = input("    : ")
+homedir = os.getcwd()
 if personalists == True:
     print("Enter the path to the inclusion list: ")
-    wordlist = Homedir+input("    %s" %Homedir)
+    wordlist = os.path.join(homedir, input("    : %s/" %homedir))
     print("Enter the path to the exclusion list: ")
-    exceptlist = Homedir+input("    %s" %Homedir)
+    exceptlist = os.path.join(homedir, input("    : %s/" %homedir))
     d = enchant.DictWithPWL("en_US", pwl=wordlist, pel=exceptlist)
 elif personalists == False:
     d = enchant.Dict("en_US")
 print("In what directory are the OCR .txt files located? ")
-srcdir = os.path.join(Homedir, input("    %s" %Homedir))
+srcdir = os.path.join(homedir, input("    : %s/" %homedir))
 if not os.path.exists(srcdir):
     print("This directory does not exist. Re-run the script and try again.")
     print("Quitting... ")
     sys.exit
 print("In what directory would you like the results? ")
-print("(if it does not exist, it will be created)")
-dstdir = os.path.join(Homedir, input("    %s" %Homedir))
+print("(If it does not exist, it will be created.)")
+dstdir = os.path.join(homedir, input("    : %s/" %homedir))
 if not os.path.exists(dstdir):
     os.mkdir(dstdir)
+# The following lines delete the Mac file ".DS_Store"
 ds_store = os.path.join(srcdir, ".DS_Store")
 if os.path.exists(ds_store):
     os.remove(ds_store)
@@ -57,6 +62,7 @@ for files in os.listdir(srcdir):
     with open(dstfile, 'w') as ofile:
         with open(srcfile, 'r') as ifile:
             for line in ifile:
+# punctuation that should not be removed is listed in the next line:
                 newline = "".join(c for c in line if c.isalpha() or c in " \'-")
                 words = newline.split(' ')
                 firstword = str(words[0])
@@ -71,9 +77,9 @@ for files in os.listdir(srcdir):
                 words = newline.split(' ')
                 hangword = str(words[-1])
                 words = words[:-1]
-#               strips out any words 3-letters or fewer that are misspelled
+# strips out any words 3-letters or fewer that are misspelled
                 words[:] = [wrd for wrd in words if wrd != "" and (len(wrd) > 3 or d.check(wrd) == True)]
                 newline = " ".join(w for w in words)
                 ofile.write("%s\n" %newline)
     filenum += 1
-    print(filenum)
+    print("file no.: %d" %filenum)
