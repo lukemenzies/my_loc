@@ -1,13 +1,29 @@
 #!/usr/bin/python3
-# this script does several things...
+# GetSearch.py uses Python 3
+# This script does several things using GNU Wget and ChronAm:
+# (a) runs a search using the Chronicling America API
+# (b) downloads PDF images for the search results
+# (c) extracts OCR text from the results and places it in
+#     both a single .TXT file and individual .TXT files.
+# *The script creates a file of URLs which it uses to download
+# the results with the command "wget -O <destination> <URL>
+# Thus, wget must already be installed and working from the command line.
+# Created by Luke Menzies for the Library of Congress 6/20/17
 
 import os, requests
 
-s = input("What query? ")
-w = input("what outfile name? ")
-homedir = input("What home directory? ")
-outfile = homedir+w+'OCR.txt'
-outfile2 = homedir+w+'URLs.txt'
+print("What is your query? (Enter the string EXACTLY as it will appear in the URL.)")
+s = input("    : ")
+print("What is the base name for the results? (Do not include an extension.)")
+w = input("    : ")
+print("What is the working directory? ")
+print("(Include fore and aft slashes.)")
+homedir = input("    : ")
+# homedir = os.getcwd()
+if not os.path.exists(homedir):
+    os.mkdir(homedir)
+outfile = os.path.join(homedir, "%s_OCR.txt" %w)
+outfile2 = os.path.join(homedir, "%s_URLs.txt" %w)
 search1 = "http://chroniclingamerica.loc.gov/search/pages/results/?proxtext="+s+"&language=eng&format=json"
 totalItems = requests.get('%s' %search1).json()['totalItems']
 print("Total Items: %d " %totalItems)
@@ -38,12 +54,11 @@ with open(outfile, 'w') as ofile:
                 ofile.write(item['ocr_eng'])
                 newurl = str(item['url']).replace('.json', '.pdf')
                 ofile2.write(newurl)
-#                ofile2.write("item number %d" %itnbr)
                 ofile2.write("\n")
-                itnbr = itnbr + 1
-                urlsnum = urlsnum + 1
-print("number of urls: %d " %urlsnum)
-wait = input("Continue (y/n)?")
+                itnbr += 1
+                urlsnum += 1
+print("Total number of URLs: %d " %urlsnum)
+# wait = input("Enter to continue.")
 filenum = 1
 with open(outfile2, 'r') as ofile3:
     for lines in ofile3:
@@ -52,6 +67,6 @@ with open(outfile2, 'r') as ofile3:
         command = "wget -O "+newdir1+w+"-%s.pdf "%num+line
 #        print(command)
         os.system(command)
-        filenum = filenum + 1
+        filenum += 1
 filenum = filenum - 1
-print("number of files downloaded: %d " %filenum)
+print("Total number of files downloaded: %d " %filenum)
