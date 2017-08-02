@@ -1,16 +1,21 @@
 #!/usr/bin/python3
-# simple function to add words to the include or exclude lists
-#
+# Wordlists.py uses Python 3
+# This is a simple function to add words to the include or exclude lists
+# used by the Python Enchant library. This can be done using an IDE
+# and in some cases a simple text editor, but this script streamlines
+# the process for checking and adding several words. To remove a word
+# from a list, use a text editor (or edit this code to do so).
+# Created by Luke Menzies for the Library of Congress 6/20/2017.
 
-import sys
+import sys, os
 import enchant
 
-# Homedir = input("What is the working directory? ")
-Homedir = '/Users/lmenzies/Documents/1Docs2017/SU17/LoC/LoC4Robots/wordlists/'
+# homedir = os.getcwd()
+homedir = input("In what directory are your wordlists located? ")
 print("What is the name of the inclusion list? ")
-wordlist = Homedir+input("     %s" % Homedir)
+wordlist = os.path.join(homedir, input("    : %s/" %homedir))
 print("What is the name of the exclusion list? ")
-exceptlist = Homedir+input("     %s" % Homedir)
+exceptlist = os.path.join(homedir, input("    : %s/" %homedir))
 standict = enchant.Dict("en_US")
 d = enchant.DictWithPWL("en_US", pwl=wordlist, pel=exceptlist)
 choice = " "
@@ -31,9 +36,9 @@ while True:
         word = input("What is the word to check? ")
         ans = standict.check(word)
         if ans == True:
-            print("True")
+            print("Correct")
         elif ans == False:
-            print("False")
+            print("Incorrect")
         else:
             print("error")
         pause = input("Enter to continue.")
