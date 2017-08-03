@@ -1,11 +1,12 @@
 #!/usr/local/bin/python3
-# TopicCloudMask.py
+# TopicCloudMask.py uses Python 3
 # This script takes the file 'topickeys.txt', output by
 # Gensim => MALLET topic modeling, and constructs topic
 # clouds for each topic in this file, according to the
-# frequency of the words/ keys in each topic.
+# frequency of the words/keys in each topic.
 # The topic clouds are shaped according to a .png silhouette
-# mask.
+# mask. This script is adapted from on A. Mueller's script:
+# https://github.com/amueller/word_cloud/blob/master/examples/masked.py
 # Created by Luke Menzies for the Library of Congress 6/20/17
 
 import os, collections
@@ -16,16 +17,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 
-workingdir = '/Users/lmenzies/Documents/1Docs2017/SU17/LoC/LoC4Robots/'
+# homedir = os.getcwd()
 print("What is the current working directory? ")
-homedir = os.path.join(workingdir, input("    %s" %workingdir))
-# homedir = input("What is the working directory? ")
+homedir = input("    : ")
 print("What is the corpus text file? ")
-corpus = os.path.join(homedir, input("    %s" %homedir))
+corpus = os.path.join(homedir, input("    : %s/" %homedir))
 print("What is the topic list file? ")
-topiclist = os.path.join(homedir, input("    %s" %homedir))
+topiclist = os.path.join(homedir, input("    : %s/" %homedir))
 print("What is the image file for the mask? ")
-maskpng = np.array(Image.open(path.join(homedir, input("    %s" %homedir))))
+maskpng = np.array(Image.open(path.join(homedir, input("    : %s/" %homedir))))
 topnum = 0
 #stopwords = set(STOPWORDS)
 #stopwords.add("tho")
